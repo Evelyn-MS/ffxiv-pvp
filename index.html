@@ -72,7 +72,7 @@
       color: #d1d5db;
     }
 
-    .arena-box {
+    .battlefield-box {
       background: rgba(0, 0, 0, 0.25);
       border-radius: 18px;
       padding: 24px;
@@ -84,10 +84,10 @@
       color: #e5e7eb;
     }
 
-    .arena-name {
+    .battlefield-name {
       font-size: 28px;
       font-weight: bold;
-      color: #facc15; /* SOLO AQUÍ amarillo */
+      color: #facc15;
       margin-bottom: 12px;
     }
 
@@ -122,7 +122,7 @@
     }
 
     .today-map {
-      font-weight: bold; /* SOLO negrita, sin amarillo */
+      font-weight: bold;
     }
 
     footer {
@@ -134,9 +134,7 @@
 </head>
 
 <body>
-
   <main class="card">
-
     <p class="label">Final Fantasy XIV PvP</p>
 
     <h1>Frontline</h1>
@@ -145,10 +143,10 @@
 
     <p class="reset-info" id="resetInfo"></p>
 
-    <section class="arena-box">
+    <section class="battlefield-box">
       <p class="subtitle">Today's active battlefield</p>
-      <div class="arena-name" id="arenaName"></div>
-      <p class="next" id="nextArena"></p>
+      <div class="battlefield-name" id="battlefieldName"></div>
+      <p class="next" id="nextBattlefield"></p>
     </section>
 
     <section class="maps">
@@ -159,7 +157,6 @@
     <footer>
       Based on the Frontline rotation introduced in Patch 7.5 of the Dawntrail expansion, starting from April 28, 2026 after the 15:00 UTC reset, The Borderland Ruins (Secure) was active.
     </footer>
-
   </main>
 
   <script>
@@ -174,7 +171,7 @@
       "Worqor Chirteh (Triumph)"
     ];
 
-    const battlefieldsImages = {
+    const battlefieldImages = {
       "Seal Rock (Seize)": "images/seal-rock.jpg",
       "The Fields of Glory (Shatter)": "images/fields-of-glory.jpg",
       "Onsal Hakair (Danshig Naadam)": "images/onsal-hakair.jpg",
@@ -223,17 +220,20 @@
       const now = new Date();
       const index = getBattlefieldIndex(now);
       const next = (index + 1) % battlefields.length;
+      const currentBattlefield = battlefields[index];
 
       document.getElementById("todayDate").textContent = formatDate(now);
+
       document.getElementById("resetInfo").textContent =
         "Daily reset: 15:00 UTC (automatically adjusted to New York time)";
 
-      document.getElementById("arenaName").textContent = battlefields[index];
-      document.getElementById("nextArena").textContent =
-        "Next battlefield (after reset): " + arenas[next];
+      document.getElementById("battlefieldName").textContent = currentBattlefield;
+
+      document.getElementById("nextBattlefield").textContent =
+        "Next battlefield (after reset): " + battlefields[next];
 
       document.body.style.backgroundImage =
-        `url('${arenaImages[arenas[index]]}')`;
+        `url('${battlefieldImages[currentBattlefield]}')`;
 
       const uniqueMaps = [
         "Seal Rock (Seize)",
@@ -250,7 +250,7 @@
         const li = document.createElement("li");
         li.textContent = map;
 
-        if (map === arenas[index]) {
+        if (map === currentBattlefield) {
           li.classList.add("today-map");
         }
 
@@ -260,6 +260,5 @@
 
     render();
   </script>
-
 </body>
 </html>
