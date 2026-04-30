@@ -24,7 +24,6 @@
       background-repeat: no-repeat;
       color: white;
       padding: 20px;
-      transition: background-image 0.8s ease-in-out;
       position: relative;
     }
 
@@ -40,8 +39,8 @@
       width: 100%;
       max-width: 560px;
       background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.16);
-      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 22px;
       padding: 32px;
       text-align: center;
       backdrop-filter: blur(10px);
@@ -61,48 +60,50 @@
     }
 
     .date {
-      font-size: 18px;
-      margin-bottom: 12px;
+      font-size: 17px;
+      margin-bottom: 18px;
       color: #d1d5db;
+      font-weight: 600;
     }
 
     .reset-info {
       font-size: 14px;
       margin-bottom: 24px;
-      color: #d1d5db;
+      color: #e5e7eb;
     }
 
     .battlefield-box {
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 18px;
+      background: rgba(0, 0, 0, 0.28);
+      border-radius: 16px;
       padding: 24px;
       margin-bottom: 22px;
     }
 
     .subtitle {
-      margin-bottom: 12px;
-      color: #e5e7eb;
+      margin-bottom: 4px;
+      color: #f3f4f6;
+      font-size: 14px;
+      font-weight: 600;
     }
 
     .battlefield-name {
       font-size: 28px;
       font-weight: bold;
       color: #facc15;
-      margin-bottom: 12px;
+      margin-bottom: 18px;
     }
 
     .next {
-      margin-top: 10px;
       color: #bfdbfe;
       font-size: 15px;
     }
 
     .maps {
-      margin-top: 22px;
       text-align: left;
-      background: rgba(255, 255, 255, 0.06);
+      background: rgba(255, 255, 255, 0.08);
       border-radius: 16px;
       padding: 18px;
+      margin-bottom: 22px;
     }
 
     .maps h2 {
@@ -114,11 +115,14 @@
     .maps ul {
       list-style: none;
       line-height: 1.8;
+      color: #f3f4f6;
     }
 
     .maps li::before {
-      content: "• ";
-      color: #facc15;
+      content: "•";
+      color: #f3f4f6;
+      margin-right: 8px;
+      font-weight: bold;
     }
 
     .today-map {
@@ -126,9 +130,11 @@
     }
 
     footer {
-      margin-top: 20px;
       font-size: 12px;
-      color: #9ca3af;
+      color: #c4c4c4;
+      line-height: 1.4;
+      text-align: left;
+      padding: 0 6px;
     }
   </style>
 </head>
@@ -137,7 +143,7 @@
   <main class="card">
     <p class="label">Final Fantasy XIV PvP</p>
 
-    <h1>Frontline</h1>
+    <h1>Frontline battlefields</h1>
 
     <p class="date" id="todayDate"></p>
 
