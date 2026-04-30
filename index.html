@@ -90,12 +90,40 @@
       font-size: 28px;
       font-weight: bold;
       color: #facc15;
-      margin-bottom: 18px;
+      margin-bottom: 14px;
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 8px auto 18px;
+      width: 75%;
+    }
+
+    .divider span {
+      height: 1px;
+      flex: 1;
+      background: rgba(191, 219, 254, 0.35);
+    }
+
+    .divider-icon {
+      color: rgba(191, 219, 254, 0.65);
+      font-size: 14px;
+      line-height: 1;
     }
 
     .next {
       color: #bfdbfe;
       font-size: 15px;
+      margin-bottom: 8px;
+    }
+
+    .countdown {
+      color: #e5e7eb;
+      font-size: 14px;
+      font-weight: 600;
     }
 
     .maps {
@@ -120,7 +148,7 @@
 
     .maps li::before {
       content: "•";
-      color: #f3f4f6;
+      color: #facc15;
       margin-right: 8px;
       font-weight: bold;
     }
@@ -143,7 +171,7 @@
   <main class="card">
     <p class="label">Final Fantasy XIV PvP</p>
 
-    <h1>Frontline battlefields</h1>
+    <h1>Frontline</h1>
 
     <p class="date" id="todayDate"></p>
 
@@ -152,7 +180,15 @@
     <section class="battlefield-box">
       <p class="subtitle">Today's active battlefield</p>
       <div class="battlefield-name" id="battlefieldName"></div>
+
+      <div class="divider">
+        <span></span>
+        <div class="divider-icon">❖</div>
+        <span></span>
+      </div>
+
       <p class="next" id="nextBattlefield"></p>
+      <p class="countdown" id="countdown"></p>
     </section>
 
     <section class="maps">
@@ -187,25 +223,41 @@
 
     const baseResetTimeUTC = Date.UTC(2026, 3, 28, 15, 0, 0);
     const baseIndex = 5;
+    const oneDay = 86400000;
 
     function getCurrentReset(date) {
-      const resetHour = 15;
-
       const todayReset = Date.UTC(
         date.getUTCFullYear(),
         date.getUTCMonth(),
         date.getUTCDate(),
-        resetHour
+        15,
+        0,
+        0
       );
 
       return date.getTime() < todayReset
-        ? todayReset - 86400000
+        ? todayReset - oneDay
         : todayReset;
+    }
+
+    function getNextReset(date) {
+      const todayReset = Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        15,
+        0,
+        0
+      );
+
+      return date.getTime() < todayReset
+        ? todayReset
+        : todayReset + oneDay;
     }
 
     function getBattlefieldIndex(date) {
       const diffDays = Math.floor(
-        (getCurrentReset(date) - baseResetTimeUTC) / 86400000
+        (getCurrentReset(date) - baseResetTimeUTC) / oneDay
       );
 
       return (baseIndex + diffDays + battlefields.length) % battlefields.length;
@@ -222,7 +274,16 @@
       return `${weekday} · ${fullDate}`;
     }
 
-    function render() {
+    function formatCountdown(milliseconds) {
+      const totalSeconds = Math.max(0, Math.floor(milliseconds / 1000));
+      const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
+      const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, "0");
+      const seconds = String(totalSeconds % 60).padStart(2, "0");
+
+      return `${hours}:${minutes}:${seconds}`;
+    }
+
+    function renderStaticContent() {
       const now = new Date();
       const index = getBattlefieldIndex(now);
       const next = (index + 1) % battlefields.length;
@@ -264,7 +325,22 @@
       });
     }
 
-    render();
+    function updateCountdown() {
+      const now = new Date();
+      const nextReset = getNextReset(now);
+      const remaining = nextReset - now.getTime();
+
+      document.getElementById("countdown").textContent =
+        "Next reset in: " + formatCountdown(remaining);
+
+      if (remaining <= 1000) {
+        renderStaticContent();
+      }
+    }
+
+    renderStaticContent();
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
   </script>
 </body>
 </html>
