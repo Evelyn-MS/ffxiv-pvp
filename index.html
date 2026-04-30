@@ -121,9 +121,9 @@
     }
 
     .countdown {
-      color: #e5e7eb;
+      color: #ffffff;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
     }
 
     .maps {
@@ -174,7 +174,6 @@
     <h1>Frontline</h1>
 
     <p class="date" id="todayDate"></p>
-
     <p class="reset-info" id="resetInfo"></p>
 
     <section class="battlefield-box">
@@ -297,7 +296,7 @@
       document.getElementById("battlefieldName").textContent = currentBattlefield;
 
       document.getElementById("nextBattlefield").textContent =
-        "Next battlefield (after reset): " + battlefields[next];
+        "Next battlefield after reset: " + battlefields[next];
 
       document.body.style.backgroundImage =
         `url('${battlefieldImages[currentBattlefield]}')`;
@@ -331,7 +330,7 @@
       const remaining = nextReset - now.getTime();
 
       document.getElementById("countdown").textContent =
-        "Next reset in: " + formatCountdown(remaining);
+        "Reset in: " + formatCountdown(remaining);
 
       if (remaining <= 1000) {
         renderStaticContent();
