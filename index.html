@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FFXIV Frontline</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #151526, #2c2145, #111827);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white;
+      padding: 20px;
+      transition: background-image 0.8s ease-in-out;
+      position: relative;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: -1;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 560px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      border-radius: 24px;
+      padding: 32px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(10px);
+    }
+
+    .label {
+      color: #c4b5fd;
+      font-size: 14px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 18px;
+    }
+
+    .date {
+      color: #d1d5db;
+      margin-bottom: 18px;
+      font-size: 16px;
+    }
+
+    .reset-info {
+      color: #d1d5db;
+      margin-bottom: 24px;
+      font-size: 16px;
+    }
+
+    .arena-box {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 18px;
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+
+    .arena-name {
+      font-size: 28px;
+      font-weight: bold;
+      color: #facc15;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #e5e7eb;
+      font-size: 15px;
+    }
+
+    .next {
+      margin-top: 18px;
+      color: #bfdbfe;
+      font-size: 15px;
+    }
+
+    .maps {
+      margin-top: 22px;
+      text-align: left;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .maps h2 {
+      font-size: 16px;
+      margin-bottom: 12px;
+      color: #ddd6fe;
+    }
+
+    .maps ul {
+      list-style: none;
+      line-height: 1.8;
+      color: #f3f4f6;
+    }
+
+    .maps li::before {
+      content: "• ";
+      color: #facc15;
+      font-weight: bold;
+    }
+
+    footer {
+      margin-top: 20px;
+      color: #9ca3af;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <p class="label">Final Fantasy XIV PvP</p>
+    <h1>Frontline</h1>
+    <p class="date" id="todayDate"></p>
+    <p class="reset-info" id="resetInfo"></p>
+
+    <section class="arena-box">
+      <div class="arena-name" id="arenaName"></div>
+      <p class="subtitle">Today's active battlefield</p>
+      <p class="next" id="nextArena"></p>
+    </section>
+
+    <section class="maps">
+      <h2>Available Frontline maps</h2>
+      <ul>
+        <li>Seal Rock (Seize)</li>
+        <li>The Fields of Glory (Shatter)</li>
+        <li>Onsal Hakair (Danshig Naadam)</li>
+        <li>Worqor Chirteh (Triumph)</li>
+        <li>The Borderland Ruins (Secure)</li>
+      </ul>
+    </section>
+
+    <footer>
+      Based on the Frontline rotation introduced in Patch 7.5 of the Dawntrail expansion, starting from April 28, 2026 after the 15:00 UTC reset, The Borderland Ruins (Secure) was active.
+    </footer>
+  </main>
+
+  <script>
+    // Frontline rotation based on the current Patch 7.5 cycle.
+    // This sequence repeats in the same order.
+    const arenas = [
+      "Seal Rock (Seize)",
+      "The Fields of Glory (Shatter)",
+      "Onsal Hakair (Danshig Naadam)",
+      "Worqor Chirteh (Triumph)",
+      "Seal Rock (Seize)",
+      "The Borderland Ruins (Secure)",
+      "Onsal Hakair (Danshig Naadam)",
+      "Worqor Chirteh (Triumph)"
+    ];
+
+    // Background images stored in the images folder.
+    const arenaImages = {
+      "Seal Rock (Seize)": "images/seal-rock.jpg",
+      "The Fields of Glory (Shatter)": "images/fields-of-glory.jpg",
+      "Onsal Hakair (Danshig Naadam)": "images/onsal-hakair.jpg",
+      "Worqor Chirteh (Triumph)": "images/worqor-chirteh.jpg",
+      "The Borderland Ruins (Secure)": "images/borderland-ruins.jpg"
+    };
+
+    // Official Frontline reset time:
+    // 8:00 a.m. PDT = 15:00 UTC.
+    // New York time changes depending on daylight saving time, so UTC is used for accuracy.
+
+    // Base date:
+    // April 28, 2026, after the 15:00 UTC reset = The Borderland Ruins (Secure).
+    const baseResetTimeUTC = Date.UTC(2026, 3, 28, 15, 0, 0);
+    const baseArenaIndex = 5;
+
+    function getCurrentFrontlineDay(date) {
+      const resetHourUTC = 15;
+
+      const currentResetTodayUTC = Date.UTC(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate(),
+        resetHourUTC,
+        0,
+        0
+      );
+
+      // If the current time is before 15:00 UTC, the active battlefield is still from the previous reset.
+      if (date.getTime() < currentResetTodayUTC) {
+        return currentResetTodayUTC - 1000 * 60 * 60 * 24;
+      }
+
+      return currentResetTodayUTC;
+    }
+
+    function getArenaIndex(date) {
+      const oneDay = 1000 * 60 * 60 * 24;
+      const currentFrontlineDay = getCurrentFrontlineDay(date);
+      const differenceInDays = Math.floor((currentFrontlineDay - baseResetTimeUTC) / oneDay);
+
+      return ((baseArenaIndex + differenceInDays) % arenas.length + arenas.length) % arenas.length;
+    }
+
+    function formatDate(date) {
+      return date.toLocaleDateString("en-US", {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    }
+
+    function showArena() {
+      const today = new Date();
+      const arenaIndex = getArenaIndex(today);
+      const nextIndex = (arenaIndex + 1) % arenas.length;
+
+      document.getElementById("todayDate").textContent = formatDate(today);
+      document.getElementById("resetInfo").textContent = "Daily reset: 15:00 UTC (automatically adjusted to New York time)";
+      document.getElementById("arenaName").textContent = arenas[arenaIndex];
+      document.getElementById("nextArena").textContent = "Next battlefield (after reset): " + arenas[nextIndex];
+
+      const currentArena = arenas[arenaIndex];
+      document.body.style.backgroundImage = `url('${arenaImages[currentArena]}')`;
+    }
+
+    showArena();
+  </script>
+</body>
+</html>
