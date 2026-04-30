@@ -63,13 +63,13 @@
     .date {
       color: #d1d5db;
       margin-bottom: 18px;
-      font-size: 16px;
+      font-size: 18px; /* slightly larger */
     }
 
     .reset-info {
       color: #d1d5db;
       margin-bottom: 24px;
-      font-size: 16px;
+      font-size: 14px; /* smaller than date but readable */
     }
 
     .arena-box {
@@ -123,6 +123,11 @@
       font-weight: bold;
     }
 
+    .today-map {
+      color: #facc15;
+      font-weight: bold;
+    }
+
     footer {
       margin-top: 20px;
       color: #9ca3af;
@@ -134,25 +139,19 @@
 <body>
   <main class="card">
     <p class="label">Final Fantasy XIV PvP</p>
-    <h1>Frontline</h1>
+    <h1>Frontline battlefields</h1>
     <p class="date" id="todayDate"></p>
     <p class="reset-info" id="resetInfo"></p>
 
     <section class="arena-box">
-      <div class="arena-name" id="arenaName"></div>
       <p class="subtitle">Today's active battlefield</p>
+      <div class="arena-name" id="arenaName"></div>
       <p class="next" id="nextArena"></p>
     </section>
 
     <section class="maps">
-      <h2>Available Frontline maps</h2>
-      <ul>
-        <li>Seal Rock (Seize)</li>
-        <li>The Fields of Glory (Shatter)</li>
-        <li>Onsal Hakair (Danshig Naadam)</li>
-        <li>Worqor Chirteh (Triumph)</li>
-        <li>The Borderland Ruins (Secure)</li>
-      </ul>
+      <h2>Frontline map rotation</h2>
+      <ul id="mapList"></ul>
     </section>
 
     <footer>
@@ -221,12 +220,14 @@
     }
 
     function formatDate(date) {
-      return date.toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
+      const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+      const fullDate = date.toLocaleDateString("en-US", {
         month: "long",
-        day: "numeric"
+        day: "numeric",
+        year: "numeric"
       });
+
+      return `${weekday} · ${fullDate}`;
     }
 
     function showArena() {
@@ -241,9 +242,33 @@
 
       const currentArena = arenas[arenaIndex];
       document.body.style.backgroundImage = `url('${arenaImages[currentArena]}')`;
+
+      const uniqueMaps = [
+        "Seal Rock (Seize)",
+        "The Fields of Glory (Shatter)",
+        "Onsal Hakair (Danshig Naadam)",
+        "Worqor Chirteh (Triumph)",
+        "The Borderland Ruins (Secure)"
+      ];
+
+      const mapList = document.getElementById("mapList");
+      mapList.innerHTML = "";
+
+      uniqueMaps.forEach((map) => {
+        const listItem = document.createElement("li");
+        listItem.textContent = map;
+
+        if (map === currentArena) {
+          listItem.classList.add("today-map");
+          listItem.textContent += " → Today";
+        }
+
+        mapList.appendChild(listItem);
+      });
     }
 
     showArena();
   </script>
 </body>
 </html>
+
